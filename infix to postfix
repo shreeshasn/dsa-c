@@ -1,0 +1,203 @@
+PROGRAM CODE FOR INFIX TO POSTFIX
+#include<stdio.h>
+
+int stk_precedence(char); 		//function prototypes
+int input_precedence(char );
+
+char pop();
+void push(char);
+
+char postfix[50],infix[50],s[50];
+int top=-1; 				//initially stack is empty
+
+void main()
+{
+int i,j=0;
+char ch,elem;
+printf("enter a valid infix expression\n");
+gets(infix);
+push('#'); 
+
+for(i=0;infix[i]!='\0';i++)
+{
+ch=infix[i]; 			//take each character 
+
+if(isalnum(ch)) 		//check if it is an operand
+postfix[j++]=ch; 	//if yes copy the operand into postfix
+else if(ch=='(') 
+push(ch);
+else if(ch==')') 
+{ 
+while( s[top]!='(')
+ 			postfix[j++]=pop();
+elem=pop();
+}
+else 
+{
+ 		while(stk_precedence(s[top])>=input_precedence(ch))
+{ postfix[j++]=pop();}
+ 		push(ch);
+ 	}
+}
+
+while(s[top]!='#') 
+postfix[j++]=pop();
+
+postfix[j]='\0';
+printf("the post fix expression is %s\n",postfix);
+}
+
+
+/*function to give precedence to operators in the stack*/
+int stk_precedence(char e)
+{
+switch(e)
+{
+case '+':
+case '-': return(2);
+case '*':
+case '/':
+case '%': return(4);
+case '^': return(5);
+case '(':
+case'#': return(0);
+}
+}
+
+
+/*function to give precedence to operators in the input symbol scanned */
+int input_precedence(char e)
+{
+switch(e)
+{
+case '+':
+case '-': return(1);
+case '*':
+case '/':
+case '%': return(3);
+case '^': return(6);
+case '(':
+case'#': return(0);
+}
+}
+
+
+/*function to push a character onto the stack*/
+void push(char ele)
+{
+++top;
+s[top]=ele;
+}
+
+
+/*function to pop a character from the stack*/
+char pop()
+{
+char e;
+e=s[top];
+--top;
+return e;
+}
+
+
+OUTPUT :
+1. Enter the infix expression
+X^Y^Z
+ Postfix expression is XYZ^^
+
+2. Enter the infix expression
+ a+b*c+(d*e+f*) g
+ Postfix expression is abc*de*f+g*+
+
+3. Enter the infix expression
+        2+3*6/2+2+3^2
+ Postfix expression is 236*2/+2+32^+
+
+
+
+PROGRAM CODE FOR POSTFIX EVALUATION
+
+#include<stdio.h> 
+#include<math.h>
+
+#define max 20
+
+void push(int e); 		//function prototypes
+int pop();
+int a[max],top=-1; 		//global declarations
+
+void main()
+{
+char post[max],ch;
+int i,op1,op2,result;
+
+printf("program to evaluate post fix expression\n");
+
+printf("enter the post fix expression\n");
+scanf("%s",post);
+
+for(i=0;post[i]!='\0';i++)
+{
+ch=post[i]; 			//take one symbol from the expression
+
+if(isdigit(ch)) 			//check if it is an operand
+push(ch-'0');
+
+else 				//else if it is an operator
+{				//pop 2 operands from the stack
+op2=pop();
+op1=pop();
+
+switch(ch) 			//perform the operation depending upon the operator
+{
+ case '+': result=op1+op2;
+ break;
+ case '-': result=op1-op2;
+ break;
+ case '*': result=op1*op2;
+ 	break;
+case '/' : result=op1/op2;
+break;
+case'^': result=pow(op1,op2);
+break;
+case '%': result = op1%op2;
+ break;
+default: printf("invalid character\n");
+}
+push(result); 			//push the result on to the stack
+ }
+}
+printf("result of the above expression is %d",pop()); 
+/*pop the final result from the stack*/
+}
+
+/*function to push*/
+void push(int e)
+{
+++top;
+a[top]=e;
+}
+
+
+
+/*function to pop*/
+int pop()
+{
+int ele;
+ele=a[top];
+--top;
+return(ele);
+}
+
+
+OUTPUT :
+Enter the valid postfix expression
+63+5*23++
+The result of expression is 50
+
+
+Enter the valid postfix expression
+874*+3-2*
+The result of the expression is 66
+
+
