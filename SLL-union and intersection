@@ -1,0 +1,113 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct node
+{
+	int data;
+	struct node *link;
+}NODE;
+
+NODE *A, *B, *C, *D;
+
+NODE* insert(NODE **first, int num)
+{
+	NODE* newNode =(NODE*)malloc(sizeof(NODE));
+	newNode->data = num;
+	newNode->link = *first;
+	*first=newNode;
+	return *first;
+}
+
+int search(NODE *first,int num)
+{
+	while(first!=NULL)
+	{
+		if (first->data==num)
+	{
+		return 1;
+	}
+	first= first->link;
+	}	
+	return 0;
+}
+
+
+NODE* findunion(NODE *A, NODE *B)
+{
+	C = NULL;
+	NODE *temp=A;
+	while(temp!=NULL)
+	{
+		insert(&C,temp->data);
+		temp=temp->link;
+	}
+	while(B!=NULL)
+	{
+		if(!search(A,B->data))
+	{
+		insert(&C, B->data);	
+	}
+	B = B->link;
+	}
+return C;
+
+}
+
+NODE* intersection(NODE *A, NODE *B)
+{
+	D = NULL;
+	while(A!=NULL)
+	{
+		if(search(B,A->data))
+	{
+		insert(&D,A->data);
+	}
+	A = A->link;
+}
+	return D;
+}
+
+void printList(NODE *cur)
+{
+while (cur!=NULL)
+{
+printf("-->%d", cur->data);
+cur = cur->link;
+}
+}
+
+void main()
+{
+int i, Acount, Bcount, temp;
+printf("\n Enter number of nodes in first Linked List:");
+scanf("%d", &Acount);
+printf("\n Enter data of first linked list:");
+for(i=0;i<Acount;i++)
+{
+	scanf("%d", &temp);
+	insert(&A, temp);
+}
+
+printList(A);
+printf("\n Enter number of nodes in second Linked List:");
+scanf("%d",&Bcount);
+
+printf("\n Enter data of second linked list:");
+for(i=0; i<Bcount; i++)
+{
+	scanf("%d",&temp);
+	insert(&B, temp);
+}
+
+printList(B);
+findunion(A, B);
+intersection(A, B);
+
+printf("\nUnion of two Linked List\n");
+printList(C);
+
+printf("\nIntersection of two Linked List\n");
+printList(D);
+}
+
+
